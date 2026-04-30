@@ -1,27 +1,50 @@
 import { Router, json, urlencoded } from "express";
-import productosDAO from "../dao/ProductsDao.js";
 import { attachManagerToRequest } from "../middlewares.js/products.middlewares.js";
+import { productModel } from "../models/productModel.js";
+import productsDao from "../dao/Index.js";
 
 const router =  Router();
 
-router.use(attachManagerToRequest);
-
-router.get('/', async (req, res) => {
+// router.use(attachManagerToRequest);
+router.get('/', async (req, res, next) => {
     try {
-    const productos = await req.productos.getAll();
-    res.status(200).send(productos);
+        const products = await productDAO.getAll();
+    res.status(200).send(products);
     } catch (error) {
         next (error)
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.get("/:pid", async (req, res, next) => {
     try {
-    const productos = await req.productos.deletProductosById(req.params);
-    res.status(200).send(productos);
+        const { pid } = req.params;
+
+        const product = await productsDao.getById(pid);
+
+        if (!product) {
+            return res.status(404).send({ error: "Producto no encontrado" });
+        }
+
+        res.send(product);
     } catch (error) {
-        next (error)
-}
+        next(error);
+    }
+});
+
+router.delete("/:pid", async (req, res, next) => {
+    try {
+        const { pid } = req.params;
+
+        const result = await productsDao.delete(pid);
+
+        if (!result) {
+            return res.status(404).send({ error: "Producto no encontrado" });
+        }
+
+        res.send({ message: "Producto eliminado" });
+    } catch (error) {
+        next(error);
+    }
 });
 
 
@@ -29,25 +52,37 @@ router.use(json(),urlencoded({ extended: true}));
 
 
 
-router.post('/:id', async (req, res) => {
+router.post("/", async (req, res, next) => {
     try {
-    const productos = await req.ProductsManager.createProduct(req.body)
-    res.status(200).send(product);
-    } catch (error) {
-        next (error)
-    }
-});
+        const product = await productsDao.create(req.body);
 
-router.put('/:id', async (req, res) => {
-    try{
-        const product = await req.productos.updateProductoById(req.body)
-        res.status(200).send(product);
+        res.status(201).send(product);
     } catch (error) {
-        next (error)
+        next(error);
     }
 });
 
 
+router.put("/:pid", async (req, res, next) => {
+    try {
+        const { pid } = req.params;
+        const updateData = req.body;
+
+        // evitar que modifiquen el id
+        delete updateData.id;
+        delete updateData._id;
+
+        const updatedProduct = await productsDao.update(pid, updateData);
+
+        if (!updatedProduct) {
+            return res.status(404).send({ error: "Producto no encontrado" });
+        }
+
+        res.status(200).send(updatedProduct);
+    } catch (error) {
+        next(error);
+    }
+});
 
 
 export default router;
