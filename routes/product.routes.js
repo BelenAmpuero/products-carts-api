@@ -8,7 +8,7 @@ const router =  Router();
 // router.use(attachManagerToRequest);
 router.get('/', async (req, res, next) => {
     try {
-        const products = await productDAO.getAll();
+        const products = await productsDao.getAll();
     res.status(200).send(products);
     } catch (error) {
         next (error)

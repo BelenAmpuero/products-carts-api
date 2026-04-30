@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+
+dotenv.config();
 import express from 'express';
 import { __dirname } from './utils.js';
 import {engine} from "express-handlebars";
@@ -5,6 +8,9 @@ import routerProducts from './routes/product.routes.js';
 //import cartRouter from "./routes/cart.routes.js";
 import viewsRouter from './routes/views.routes.js';
 import mongoose from 'mongoose';
+
+
+
 const app = express();
 
 app.use(express.static(__dirname + "/public"));

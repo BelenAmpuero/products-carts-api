@@ -1,7 +1,9 @@
-import { productModel } from "../models/productModel.js";
+import { productModel } from "../../models/productModel.js";
 
 class ProductsDaoMongo {
-    async getAll({ limit = 10, page = 1, query, sort }) {
+
+    async getAll({ limit = 10, page = 1, query, sort } ={}) {
+
     // Filtro
     let filter = {};
 
