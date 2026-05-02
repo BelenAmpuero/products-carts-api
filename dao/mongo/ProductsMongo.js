@@ -50,8 +50,12 @@ class ProductsDaoMongo {
     }
 
     async create(product) {
+    if (Array.isArray(product)) {
+        return await productModel.insertMany(product);
+    } else {
         return await productModel.create(product);
     }
+}
 
     async update(id, data) {
         return await productModel.findByIdAndUpdate(id, data, { new: true });

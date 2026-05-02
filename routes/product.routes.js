@@ -52,11 +52,11 @@ router.use(json(),urlencoded({ extended: true}));
 
 
 
-router.post("/", async (req, res, next) => {
-    try {
-        const product = await productsDao.create(req.body);
 
-        res.status(201).send(product);
+router.post('/', async (req, res, next) => {
+    try {
+        const result = await productsDao.create(req.body);
+        res.status(200).send(result);
     } catch (error) {
         next(error);
     }
