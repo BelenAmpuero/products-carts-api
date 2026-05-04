@@ -7,6 +7,13 @@
     <title>{{title}}</title>
 </head>
 <body>
+        <h2>Categorías</h2>
+    {{#each categories}}
+        <a href="/products?query={{this}}">
+            <button>{{this}}</button>
+        </a>
+    {{/each}}
+
     {{{body}}}
     
     <footer>Hola soy el Footer</footer>

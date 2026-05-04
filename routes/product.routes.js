@@ -5,7 +5,6 @@ import productsDao from "../dao/Index.js";
 
 const router =  Router();
 
-// router.use(attachManagerToRequest);
 router.get('/', async (req, res, next) => {
     try {
         const products = await productsDao.getAll();
@@ -18,6 +17,7 @@ router.get('/', async (req, res, next) => {
 router.get("/:pid", async (req, res, next) => {
     try {
         const { pid } = req.params;
+        const { query } = req.query;
 
         const product = await productsDao.getById(pid);
 

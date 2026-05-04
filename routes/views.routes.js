@@ -5,18 +5,29 @@ import productosDAO from "../dao/ProductsDao.js";
 const router = Router();
 
 router.get("/", (req, res)=>{
-    res.render("index.handlebars", {
+    res.render("index", {
         title: "Home",
 
     });
 });
 
-router.get("/products", async (req, res)=>{
-    const products = await productosDAO.getAll()
-    res.render("products.handlebars",{
+router.get("/products", async (req, res, next)=>{
+    try{
+        console.log("ENTRÓ A /products");
+
+        const { query } = req.query; 
+
+        const result = await productosDAO.getAll({ query })
+
+        console.log(result); 
+
+    res.render("products",{
         title: "Tienda",
-        products
-    });
+        products: result.payload
+    })}
+    catch(error){
+        next(error);
+    }
 });
 
 export default router;

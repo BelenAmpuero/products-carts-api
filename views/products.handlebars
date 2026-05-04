@@ -1,14 +1,23 @@
 
 {{#each products}}
 {{#if this.status}}
-<p>{{this.id}}</p> 
-<p>{{this.nombre}}</p> 
-<p>{{this.categoria}}</p> 
-<p>{{this.precio}}</p> 
+<div>
+<p>{{this._id}}</p> 
+<p>{{this.title}}</p> 
+<p>{{this.category}}</p> 
+<p>{{this.price}}</p> 
 <p>{{this.stock}}</p> 
-<p>{{this.material}}</p> 
-<p>{{this.descripcion}}</p> 
+<p>{{this.description}}</p> 
+ {{#if this.thumbnails.length}}
+        <p>Imágenes:</p>
+        {{#each this.thumbnails}}
+          <p>{{this}}</p>
+        {{/each}}
+      {{/if}}
+<div>
 <hr>
 {{/if}}
 {{/each}}
+
+
 

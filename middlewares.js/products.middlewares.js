@@ -1,4 +1,4 @@
 export async function attachManagerToRequest (req, res, next){
-    req.productos = productosDAO;
+    req.products = productosDAO;
     next();
 }

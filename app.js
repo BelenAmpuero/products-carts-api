@@ -5,9 +5,10 @@ import express from 'express';
 import { __dirname } from './utils.js';
 import {engine} from "express-handlebars";
 import routerProducts from './routes/product.routes.js';
-//import cartRouter from "./routes/cart.routes.js";
+import cartRouter from "./routes/cart.routes.js";
 import viewsRouter from './routes/views.routes.js';
 import mongoose from 'mongoose';
+import { categoriesMiddleware } from "./middlewares.js/category.middlewares.js";
 
 
 
@@ -19,7 +20,8 @@ app.set("view engine", "handlebars");
 app.set("views", __dirname + "/views");
 
 app.use("/api/products", routerProducts)
-//app.use("/api/carts", cartRouter);
+app.use("/api/carts", cartRouter);
+app.use(categoriesMiddleware);
 app.use("/", viewsRouter);
 
 app.use((err, req, res, next) => {

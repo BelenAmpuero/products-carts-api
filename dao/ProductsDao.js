@@ -152,11 +152,11 @@ const products = [
 ];
 
 const productosDAO = {
-    getAll: () => productos,
-    getById: (id) => productos.find (p => p.id === id),
+    getAll: () => products,
+    getById: (id) => products.find (p => p.id === id),
 
      createProduct: (nuevoProducto) => {
-    productos.push(nuevoProducto);
+    products.push(nuevoProducto);
     return nuevoProducto;
   },
 
