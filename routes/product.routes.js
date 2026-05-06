@@ -1,25 +1,45 @@
 import { Router, json, urlencoded } from "express";
 import { attachManagerToRequest } from "../middlewares.js/products.middlewares.js";
 import { productModel } from "../models/productModel.js";
-import productsDao from "../dao/Index.js";
 
 const router =  Router();
 
 router.get('/', async (req, res, next) => {
     try {
-        const products = await productsDao.getAll();
-    res.status(200).send(products);
+        const {page = 1, limit = 10, category} = req.query;
+
+        const filter = {};
+        if (category) filter.category = category;
+
+        const pageNum = parseInt(page) || 1;
+        const limitNum = parseInt(limit) || 10;
+
+        const skip = (pageNum - 1) * limitNum;
+
+        const products = await productModel.find(filter)
+        .skip(skip)
+        .limit(limitNum)
+        .lean();
+
+
+    res.render("products", {
+            title: "Productos",
+            products,
+            category
+        });
+
     } catch (error) {
         next (error)
+
     }
+
 });
 
 router.get("/:pid", async (req, res, next) => {
     try {
         const { pid } = req.params;
-        const { query } = req.query;
 
-        const product = await productsDao.getById(pid);
+        const product = await productModel.findById(pid).lean();
 
         if (!product) {
             return res.status(404).send({ error: "Producto no encontrado" });
@@ -35,7 +55,7 @@ router.delete("/:pid", async (req, res, next) => {
     try {
         const { pid } = req.params;
 
-        const result = await productsDao.delete(pid);
+        const result = await productModel.findByIdAndDelete(pid);
 
         if (!result) {
             return res.status(404).send({ error: "Producto no encontrado" });
@@ -55,8 +75,10 @@ router.use(json(),urlencoded({ extended: true}));
 
 router.post('/', async (req, res, next) => {
     try {
-        const result = await productsDao.create(req.body);
-        res.status(200).send(result);
+         const result = Array.isArray(req.body)
+            ? await productModel.insertMany(req.body)
+            : await productModel.create(req.body);
+        res.status(201).send(result);
     } catch (error) {
         next(error);
     }
@@ -72,7 +94,11 @@ router.put("/:pid", async (req, res, next) => {
         delete updateData.id;
         delete updateData._id;
 
-        const updatedProduct = await productsDao.update(pid, updateData);
+        const updatedProduct = await productModel.findByIdAndUpdate(
+            pid,
+            updateData,
+            { new: true }
+        );
 
         if (!updatedProduct) {
             return res.status(404).send({ error: "Producto no encontrado" });

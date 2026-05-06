@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { cartModel } from "../models/cartModel.js";
+import { productModel } from "../models/productModel.js";
 
 const router = Router();
+
+
 
 // Obtener carrito con populate
 router.get("/:cid", async (req, res, next) => {
@@ -10,7 +13,8 @@ router.get("/:cid", async (req, res, next) => {
 
         const cart = await cartModel
             .findById(cid)
-            .populate("products.product");
+            .populate("products.product")
+            .lean();
 
         if (!cart) {
             return res.status(404).send({ error: "Cart not found" });
@@ -22,6 +26,21 @@ router.get("/:cid", async (req, res, next) => {
     }
 });
 
+// Nuevo carrito
+
+router.post("/", async (req, res, next) => {
+    try {
+
+        const newCart = await cartModel.create({
+            products: []
+        });
+
+        res.status(201).send(newCart);
+
+    } catch (error) {
+        next(error);
+    }
+});
 
 // Agregar producto
 router.post("/:cid/products/:pid", async (req, res, next) => {

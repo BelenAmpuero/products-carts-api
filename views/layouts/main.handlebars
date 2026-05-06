@@ -9,7 +9,7 @@
 <body>
         <h2>Categorías</h2>
     {{#each categories}}
-        <a href="/products?query={{this}}">
+        <a href="/products?category={{this}}">
             <button>{{this}}</button>
         </a>
     {{/each}}

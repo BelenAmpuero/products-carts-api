@@ -1,5 +1,6 @@
 import { Router } from "express";
-import productosDAO from "../dao/ProductsDao.js";
+import { cartModel } from "../models/cartModel.js";
+import { productModel } from "../models/productModel.js";
 // import { title } from "process";
 
 const router = Router();
@@ -15,17 +16,51 @@ router.get("/products", async (req, res, next)=>{
     try{
         console.log("ENTRÓ A /products");
 
-        const { query } = req.query; 
+        const { category } = req.query; 
 
-        const result = await productosDAO.getAll({ query })
+        const filter = {};
+        if (category) {
+            filter.category = category;
+        }
 
-        console.log(result); 
+        const products = await productModel.find(filter).lean();
+        const categories = await productModel.distinct("category");
+
+        console.log(products); 
 
     res.render("products",{
         title: "Tienda",
-        products: result.payload
-    })}
+        products: products,
+        categories
+    });
+}
+
+
     catch(error){
+        next(error);
+    }
+});
+
+router.get("/carts/:cid", async (req, res, next) => {
+    try {
+
+        const { cid } = req.params;
+
+        const cart = await cartModel
+            .findById(cid)
+            .populate("products.product")
+            .lean();
+
+        if (!cart) {
+            return res.status(404).send("Cart not found");
+        }
+
+        res.render("cart", {
+            title: "Carrito",
+            cart
+        });
+
+    } catch (error) {
         next(error);
     }
 });
