@@ -110,7 +110,7 @@ router.put("/:cid", async (req, res, next) => {
 
         const updatedCart = await cartModel.findByIdAndUpdate(
             cid,
-            { products: req.body },
+            { products: req.body.products },
             { new: true }
         );
 

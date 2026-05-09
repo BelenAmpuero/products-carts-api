@@ -86,6 +86,8 @@ router.post('/', async (req, res, next) => {
 
 
 router.put("/:pid", async (req, res, next) => {
+        console.log(req.body)
+
     try {
         const { pid } = req.params;
         const updateData = req.body;
